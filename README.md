@@ -1,4 +1,4 @@
-# cipher
+# Cipher
 
 Elixir crypto library to encrypt/decrypt arbitrary binaries. It uses
 [Erlang Crypto](http://www.erlang.org/doc/man/crypto.html), so it's not big
