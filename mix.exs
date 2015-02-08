@@ -20,7 +20,8 @@ defmodule Cipher.Mixfile do
   defp package do
     [contributors: ["Rubén Caro"],
      licenses: ["MIT"],
-     links: %{github: "https://github.com/rubencaro/cipher"}]
+     links: %{github: "https://github.com/rubencaro/cipher",
+              other_languages: "https://gist.github.com/rubencaro/9545060"}]
   end
 
 end
