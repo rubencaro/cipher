@@ -67,8 +67,6 @@ the same key/iv with a call to `validate_signed_url/3`
 
 ## TODOs
 
-* Add to travis
-* Add to hex
 * Sign POST/PUT body
 * Improve README
 
