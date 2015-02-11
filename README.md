@@ -14,7 +14,7 @@ This way it can be used from Python, Ruby or Elixir apps.
 
 ## Use
 
-Just add `{:cipher, github: "rubencaro/cipher"}` to your `mix.exs`.
+Just add `{:cipher, "0.1.0"}` to your `mix.exs`.
 
 Basically you use `encrypt/3` and `decrypt/3` to get it. You have to pass them
 a key/iv pair previously generated using `generate_key/1` and `generate_iv/1`.
