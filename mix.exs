@@ -8,12 +8,10 @@ defmodule Cipher.Mixfile do
      package: package,
      description: """
         Elixir crypto library to encrypt/decrypt arbitrary binaries. It uses
-        [Erlang Crypto](http://www.erlang.org/doc/man/crypto.html), so it's not big
-        deal. Mostly a collection of helpers wrapping it.
-        It allows to use a crypted key to validate signed requests. The same
-        cipher is implemented for Python, Ruby and Elixir
-        [here](https://gist.github.com/rubencaro/9545060), so it can be used
-        to integrate apps from different languages.
+        Erlang Crypto, so it's not big deal. Mostly a collection of helpers
+        wrapping it. It allows to use a crypted key to validate signed requests.
+        The exact same cipher is implemented for Python, Ruby and Elixir, so it
+        can be used to integrate apps from different languages.
       """]
   end
 
