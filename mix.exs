@@ -24,7 +24,7 @@ defmodule Cipher.Mixfile do
   end
 
   defp deps do
-    [{:poison, "~> 2.0", only: :test}]
+    [{:poison, "~> 2.0"}]
   end
 
 end
