@@ -27,44 +27,43 @@ defmodule CipherTest do
   test "validate_signed_url" do
     # ok with regular urls
     url = "/bla/bla"
-    H.spit("#{url}" |> C.sign_url |> C.validate_signed_url)
     assert {:ok, _} = "#{url}" |> C.sign_url |> C.validate_signed_url
-    assert "#{url}?sdfasdf=sdfgadf&dsfasdf=addfga" |> C.sign_url |> C.validate_signed_url
+    assert {:ok, _} = "#{url}?sdfasdf=sdfgadf&dsfasdf=addfga" |> C.sign_url |> C.validate_signed_url
 
     # not signed and wrongly signed fails
-    refute "#{url}" |> C.validate_signed_url
-    refute "#{url}?signature=badhash" |> C.validate_signed_url
-    refute "#{url}?asdkjh=sdfklh&signature=badhash" |> C.validate_signed_url
+    assert {:error, _} = "#{url}" |> C.validate_signed_url
+    assert {:error, _} = "#{url}?signature=badhash" |> C.validate_signed_url
+    assert {:error, _} = "#{url}?asdkjh=sdfklh&signature=badhash" |> C.validate_signed_url
   end
 
   test "it works ignoring some too" do
     url = "/bla/bla"
-    s = "#{url}" |> C.sign_url(ignored: ["source"])
-    assert C.validate_signed_url(s)
-    assert C.validate_signed_url(s <> "&source=crappysource")
-    refute C.validate_signed_url(s <> "&other=crappysource")
+    s = "#{url}" |> C.sign_url(ignore: ["source"])
+    assert {:ok, _} = C.validate_signed_url(s)
+    assert {:ok, _} = C.validate_signed_url(s <> "&source=crappysource")
+    assert {:error, _} = C.validate_signed_url(s <> "&other=crappysource")
   end
 
   test "Magic Token works with url" do
     url = "/bla/bla"
-    assert "#{url}?a=123&signature=#{H.env(:magic_token)}" |> C.validate_signed_url
-    refute "#{url}?a=123&signature=#{H.env(:magic_token)}X" |> C.validate_signed_url
+    assert {:ok, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}" |> C.validate_signed_url
+    assert {:error, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}X" |> C.validate_signed_url
   end
 
   test "Magic Token works with body" do
     url = "/bla/bla"
     body = Poison.encode! %{"hola": " qué tal ｸｿ"}
-    assert "#{url}?a=123&signature=#{H.env(:magic_token)}" |> C.validate_signed_body(body)
-    refute "#{url}?a=123&signature=#{H.env(:magic_token)}X" |> C.validate_signed_body(body)
+    assert {:ok, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}X" |> C.validate_signed_body(body)
   end
 
   test "validate_signed_body" do
     url = "/bla/bla"
     body = Poison.encode! %{"hola": " qué tal ｸｿ"}
-    refute "#{url}" |> C.validate_signed_body(body)
-    refute "#{url}?signature=badhash" |> C.validate_signed_body(body)
-    refute "#{url}?asdkjh=sdfklh&signature=badhash" |> C.validate_signed_body(body)
-    assert "#{url}" |> C.sign_url_from_body(body) |> C.validate_signed_body(body)
+    assert {:error, _} = "#{url}" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{url}?signature=badhash" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{url}?asdkjh=sdfklh&signature=badhash" |> C.validate_signed_body(body)
+    assert {:ok, _} = "#{url}" |> C.sign_url_from_body(body) |> C.validate_signed_body(body)
   end
 
 end

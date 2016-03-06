@@ -45,20 +45,29 @@ defmodule Cipher do
     Gets signature for given `base` and appends as a param to `url`.
     Returns `url` with appended param.
   """
-  def sign(url, base) do
+  def sign(url, base, payload \\ %{}) do
     nexus = if String.contains?(url, "?"), do: "&", else: "?"
     signature = :crypto.hash(:md5, base) |> Cipher.Digest.hexdigest
     {_, _, micros} = :os.timestamp
     pepper = micros |> Integer.to_string |> String.rjust(8) # 8 characters long
-    crypted = signature <> pepper |> encrypt
-    url <> nexus <> "signature=" <> crypted
+    data = payload |> Map.merge(%{md5: signature <> pepper})
+    url <> nexus <> "signature=" <> cipher(data)
   end
 
   @doc """
     An URL is signed by getting a hash from it, ciphering that hash,
     and appending it as the last query parameter.
   """
-  def sign_url(url), do: sign(url, url)
+  def sign_url(url), do: sign_url(url, %{})
+  def sign_url(url, payload) when is_map(payload), do: sign(url, url, payload)
+  def sign_url(url, payload) when is_list(payload),
+    do: sign(url, url, Enum.into(payload, %{}))
+
+  @doc """
+    The URL is signed by getting a MD5 hash from the sorted data values, ciphering that hash,
+    and appending it as the last query parameter of the URL.
+  """
+  def sign_url_from_body(url, body), do: sign(url, body)
 
   @doc """
     Decrypts `ciphered`, and compare with an MD5 hash got from base.
@@ -73,28 +82,30 @@ defmodule Cipher do
   end
 
   defp validate_parsed_signature(parsed, base, rest) do
-    ignored = parsed["data"] |> Map.get("ignore", [])
+    ignored = parsed |> Map.get("ignore", [])
+    rest = rest |> String.split("&", trim: true)
     case validate_ignored(ignored, rest) do
       :ok -> validate_base(parsed, base)
-      :error -> false
+      any -> any
     end
   end
 
   defp validate_ignored(_, []), do: :ok
   defp validate_ignored(ignored, [r | rest]) do
-    case r in ignored do
+    n = r |> String.split("=") |> List.first
+    case n in ignored do
       true -> validate_ignored(ignored, rest)
-      false -> :error
+      false -> {:error, "Not ignored or signed: #{r}"}
     end
   end
 
   defp validate_base(parsed, base) do
     signature = :crypto.hash(:md5, base)
                 |> Cipher.Digest.hexdigest
-    read_signature = String.slice(parsed["data"]["md5"], 0..-9) # removing pepper from parsed
+    read_signature = String.slice(parsed["md5"], 0..-9) # removing pepper from parsed
     case signature == read_signature do
-      true -> parsed["data"]
-      false -> false
+      true -> {:ok, parsed}
+      false -> {:error, "Bad signature"}
     end
   end
 
@@ -119,7 +130,7 @@ defmodule Cipher do
 
   defp validate_magic_token(popped, base, rest) do
     case popped == H.env(:magic_token) do
-      true -> true
+      true -> {:ok, %{}}
       false -> validate_signature(popped, base, rest)
     end
   end
