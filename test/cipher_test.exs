@@ -66,4 +66,14 @@ defmodule CipherTest do
     assert {:ok, _} = "#{url}" |> C.sign_url_from_body(body) |> C.validate_signed_body(body)
   end
 
+  test "signing body also ignores params" do
+    url = "/bla/bla"
+    body = Poison.encode! %{"hola": " qué tal ｸｿ"}
+    signed = C.sign_url_from_body(url, body, ignore: ["cb"])
+    assert {:ok, _} = "#{signed}" |> C.validate_signed_body(body)
+    assert {:ok, _} = "#{signed}&cb=123456" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{signed}&other=123456" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{signed}&cb=123456&other=any" |> C.validate_signed_body(body)
+  end
+
 end
