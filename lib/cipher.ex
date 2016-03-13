@@ -69,7 +69,12 @@ defmodule Cipher do
   @doc """
     Gets signature for given `base` and appends as a param to `url`.
     Returns `url` with appended param.
-    Given `payload` is contained within the signature and will be
+    Given `payload` is contained within the signature and will be returned
+    by `validate_signature/3`.
+
+    Be aware that `payload` must be a `Map`, and that some keys, such as
+    `md5` or `ignore`, will be used internally. Keep things namespaced in there
+    and there will be no collisions.
   """
   def sign(url, base), do: sign(url, base, %{})
   def sign(url, base, payload) when is_list(payload),
@@ -86,6 +91,11 @@ defmodule Cipher do
   @doc """
     An URL is signed by getting a hash from it, ciphering that hash,
     and appending it as the last query parameter.
+
+    ```elixir
+    "/bla/bla?p1=1&p2=2"
+    |> Cipher.sign_url  # "/bla/bla?p1=1&p2=2&signature=4B6WOiuD9N39K7p%2BnqNIljGh5F%2F%2BnHRQGZC9ih%2Bh%2BHGZc8Tz0KdRJXC%2B5M%2B8%2BHZ2mAXPh3jQcSRieTq4dGm5Ng%3D%3D"
+    ```
   """
   def sign_url(url, payload \\ %{}), do: sign(url, url, payload)
 
@@ -97,8 +107,8 @@ defmodule Cipher do
 
   @doc """
     Decrypts `ciphered`, and compare with an MD5 hash got from base.
-    Returns false if decryption failed, or if comparison failed.
-    Whatever parsed otherwise.
+    Returns `{:error, reason}` if decryption failed, or if comparison failed.
+    `{:ok, payload}` otherwise.
   """
   def validate_signature(ciphered, base, rest) do
     case parse(ciphered) do
@@ -107,6 +117,8 @@ defmodule Cipher do
     end
   end
 
+  # Check if parsed data looks good, then go on validating base.
+  #
   defp validate_parsed_signature(parsed, base, rest) do
     ignored = parsed |> Map.get("ignore", [])
     rest = rest |> String.split("&", trim: true)
@@ -116,6 +128,8 @@ defmodule Cipher do
     end
   end
 
+  # Check if 
+  #
   defp validate_ignored(_, []), do: :ok
   defp validate_ignored(ignored, [r | rest]) do
     n = r |> String.split("=") |> List.first
@@ -136,9 +150,14 @@ defmodule Cipher do
   end
 
   @doc """
-    Pop the last parameter, which must be `signature`,
-    get an MD5 hash of the remains,
-    decrypt popped value, and compare with the MD5 hash
+    Validate given signed URL.
+
+    ```elixir
+    "/bla/bla?p1=1&p2=2&signature=4B6WOiuD9N39K7p%2BnqNIljGh5F%2F%2BnHRQGZC9ih%2Bh%2BHGZc8Tz0KdRJXC%2B5M%2B8%2BHZ2mAXPh3jQcSRieTq4dGm5Ng%3D%3D"
+    |> Cipher.validate_signed_url  # {:ok, %{"md5" => "86e359da7ab4886f3525ac2b9c5edc5b  613146"}}
+    ```
+
+    `{:ok, payload}` or `{:error, reason}` are returned.
   """
   def validate_signed_url(url) do
     {clean_url, popped, rest} = pop_signature(url)
@@ -146,14 +165,17 @@ defmodule Cipher do
   end
 
   @doc """
-    Pop the last parameter from the URL, decrypt it,
-    get an MD5 of the body, and compare with the decrypted value
+    Validate given signed URL + body.
+
+    `{:ok, payload}` or `{:error, reason}` are returned.
   """
   def validate_signed_body(url, body) do
     {_, popped, rest} = pop_signature(url)
     validate_magic_token(popped, body, rest)
   end
 
+  # First check magic token presence, then go on validating.
+  #
   defp validate_magic_token(popped, base, rest) do
     case popped == H.env(:magic_token) do
       true -> {:ok, %{}}
@@ -172,6 +194,7 @@ defmodule Cipher do
   end
 
   # Remove PKCS#7 padding from given string.
+  #
   defp depad(str) do
     <<last>> = String.last str
     String.rstrip str, last
