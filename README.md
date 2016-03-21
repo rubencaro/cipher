@@ -16,7 +16,7 @@ This way it can be used from Python, Ruby or Elixir apps.
 
 Just add `{:cipher, "1.0.0"}` to your `mix.exs`.
 
-Then add your keys to `config.exs`:
+Then add your keys to `config.exs`, **they are needed to compile `Cipher`**:
 ```elixir
 config :cipher, keyphrase: "testiekeyphraseforcipher",
                 ivphrase: "testieivphraseforcipher",
