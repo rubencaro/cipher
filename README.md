@@ -2,6 +2,7 @@
 
 [![Build Status](https://api.travis-ci.org/rubencaro/cipher.svg)](https://travis-ci.org/rubencaro/cipher)
 [![Hex Version](http://img.shields.io/hexpm/v/cipher.svg?style=flat)](https://hex.pm/packages/cipher)
+[![Hex Version](http://img.shields.io/hexpm/dt/cipher.svg?style=flat)](https://hex.pm/packages/cipher)
 
 Elixir crypto library to encrypt/decrypt arbitrary binaries. It uses
 [Erlang Crypto](http://www.erlang.org/doc/man/crypto.html), so it's not big
