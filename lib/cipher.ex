@@ -33,12 +33,16 @@ defmodule Cipher do
     ```
   """
   def decrypt(crypted) when is_binary(crypted) do
-    res = crypted |> URI.decode_www_form |> Base.decode64
-    case res do
-      {:ok, decoded} ->
-        :crypto.block_decrypt(:aes_cbc128, @k, @i, decoded) |> depad
-      :error         ->
-        {:error, "Could not decode crypted string '#{crypted}'"}
+    try do
+      res = crypted |> URI.decode_www_form |> Base.decode64
+      case res do
+        {:ok, decoded} ->
+          :crypto.block_decrypt(:aes_cbc128, @k, @i, decoded) |> depad
+        :error         ->
+          {:error, "Could not decode crypted string '#{crypted}'"}
+      end      
+    rescue
+      e in ArgumentError -> {:error, e.message}
     end
   end
 
