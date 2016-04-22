@@ -18,7 +18,7 @@ defmodule Cipher do
     |> Cipher.decrypt  # "secret"
     ```
   """
-  def encrypt(data) do
+  def encrypt(data) when is_binary(data) do
     encrypted = :crypto.block_encrypt :aes_cbc128, @k, @i, pad(data)
     encrypted |> Base.encode64 |> URI.encode_www_form
   end
@@ -32,9 +32,14 @@ defmodule Cipher do
     |> Cipher.decrypt  # "secret"
     ```
   """
-  def decrypt(crypted) do
-    {:ok, decoded} = crypted |> URI.decode_www_form |> Base.decode64
-    :crypto.block_decrypt(:aes_cbc128, @k, @i, decoded) |> depad
+  def decrypt(crypted) when is_binary(crypted) do
+    res = crypted |> URI.decode_www_form |> Base.decode64
+    case res do
+      {:ok, decoded} ->
+        :crypto.block_decrypt(:aes_cbc128, @k, @i, decoded) |> depad
+      :error         ->
+        {:error, "Could not decode crypted string '#{crypted}'"}
+    end
   end
 
   @doc """
@@ -128,7 +133,7 @@ defmodule Cipher do
     end
   end
 
-  # Check if 
+  # Check if
   #
   defp validate_ignored(_, []), do: :ok
   defp validate_ignored(ignored, [r | rest]) do
