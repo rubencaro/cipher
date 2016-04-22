@@ -93,6 +93,14 @@ signed = "/bla/bla?p1=1&p2=2" |> Cipher.sign_url(ignore: ["cachebuster"])
 
 Note you can use `sign_url/2` to pass any data within the signature itself, just as you do with the `ignore` list. Any payload will be returned by `validate_signed_url/1`.
 
+```elixir
+signed = "/bla/bla?p1=1" |> Cipher.sign_url(mydata: "yes, any data")
+signed |> Cipher.validate_signed_url
+#  {:ok,
+#   %{"md5" => "eacac4224aef3bfabee309ee2f95c1e8  176303",
+#     "mydata" => "yes, any data"}}
+```
+
 If you want to pass cipher data on your URLs you could also use straight `cipher/1` and `parse/1`.
 
 ## Sign/Validate body
