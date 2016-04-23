@@ -150,7 +150,7 @@ defmodule Cipher do
     end
   end
 
-  # Check if
+  # Check if every extra param was explicitly ignored
   #
   defp validate_ignored(_, []), do: :ok
   defp validate_ignored(ignored, [r | rest]) do
@@ -161,6 +161,8 @@ defmodule Cipher do
     end
   end
 
+  # Check if signature (which is derived from `base`) matches the one in `parsed`
+  #
   defp validate_base(parsed, base) do
     signature = :crypto.hash(:md5, base)
                 |> Cipher.Digest.hexdigest
