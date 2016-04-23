@@ -36,9 +36,17 @@ defmodule Cipher do
     res = crypted |> URI.decode_www_form |> Base.decode64
     case res do
       {:ok, decoded} ->
-        :crypto.block_decrypt(:aes_cbc128, @k, @i, decoded) |> depad
+        do_decrypt(decoded)
       :error         ->
         {:error, "Could not decode crypted string '#{crypted}'"}
+    end
+  end
+
+  defp do_decrypt(decoded) do
+    try do
+      :crypto.block_decrypt(:aes_cbc128, @k, @i, decoded) |> depad
+    rescue
+      _ -> {:error, "Could not decrypt string '#{decoded}'"}
     end
   end
 

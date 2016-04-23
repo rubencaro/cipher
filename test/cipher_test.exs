@@ -8,7 +8,8 @@ defmodule CipherTest do
     s = Poison.encode! %{"hola": " qué tal ｸｿ"}
     assert s == s |> C.encrypt |> C.decrypt
 
-    assert {:error, _} = "random" |> C.decrypt
+    assert {:error, _} = "random" |> C.decrypt    # decode fails
+    assert {:error, _} = "nonsense" |> C.decrypt  # decrypt fails
   end
 
   test "parse ciphered hash" do
