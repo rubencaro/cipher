@@ -31,14 +31,24 @@ defmodule Cipher do
     |> Cipher.encrypt  # "KSHHdx0uyveYGY5PHqLAKw%3D%3D"
     |> Cipher.decrypt  # "secret"
     ```
+
+    Returns `{:error, "Could not decode string 'yourstring'"}` if it failed in
+    the first stage of decryption (unescaping and decoding given string). That
+    means someone tampered your crypted data, or maybe the crypted string was
+    not transferred properly.
+
+    Returns `{:error, "Could not decrypt string 'yourstring'"}` if it failed in
+    the last stage, the decryption itself. Usually means your decryption keys are
+    not the same that were used to encrypt. But may also be some cases were a 
+    tampered or wrongly transferred string can be actually unescaped and decoded
+    successfully. They will fail in the decryption stage.
   """
   def decrypt(crypted) when is_binary(crypted) do
-    res = crypted |> URI.decode_www_form |> Base.decode64
-    case res do
-      {:ok, decoded} ->
-        do_decrypt(decoded)
-      :error         ->
-        {:error, "Could not decode crypted string '#{crypted}'"}
+    try do
+      {:ok, decoded} = crypted |> URI.decode_www_form |> Base.decode64
+      do_decrypt(decoded)
+    rescue
+      _ -> {:error, "Could not decode string '#{crypted}'"}
     end
   end
 
