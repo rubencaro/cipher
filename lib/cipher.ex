@@ -39,7 +39,7 @@ defmodule Cipher do
 
     Returns `{:error, "Could not decrypt string 'yourstring'"}` if it failed in
     the last stage, the decryption itself. Usually means your decryption keys are
-    not the same that were used to encrypt. But may also be some cases were a 
+    not the same that were used to encrypt. But may also be some cases were a
     tampered or wrongly transferred string can be actually unescaped and decoded
     successfully. They will fail in the decryption stage.
   """
@@ -82,10 +82,9 @@ defmodule Cipher do
     ```
   """
   def parse(crypted) do
-    try do
-      {:ok, crypted |> decrypt |> Poison.decode!}
-    rescue
-      reason -> {:error, reason}
+    case crypted |> decrypt do
+      {:error, reason} -> {:error, reason}
+      decrypted -> Poison.decode(decrypted)
     end
   end
 

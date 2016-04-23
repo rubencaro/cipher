@@ -17,7 +17,7 @@ defmodule CipherTest do
     s = Poison.encode! h
 
     assert {:ok, ^h} = s |> C.encrypt |> C.parse
-    assert {:error, _} = 'very invalid' |> C.parse
+    assert {:error, _} = "very invalid" |> C.parse
     assert {:error, _} = (C.encrypt(s) <> "slightly invalid") |> C.parse
   end
 
