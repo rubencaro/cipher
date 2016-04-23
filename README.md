@@ -138,3 +138,17 @@ This is a master signature. If you put this binary as `signature` on your url, t
 ## TODOs
 
 * Improve error messages
+
+## Changelog
+
+### 1.0.2
+
+* Fix [#3](https://github.com/rubencaro/cipher/issues/3), [#4](https://github.com/rubencaro/cipher/issues/4)
+
+### 1.0.1
+
+* Fix [#2](https://github.com/rubencaro/cipher/issues/2)
+
+### 1.0.0
+
+* First stable release
