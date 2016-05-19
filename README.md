@@ -138,6 +138,7 @@ This is a master signature. If you put this binary as `signature` on your url, t
 ## TODOs
 
 * Improve error messages
+* Add simple `Plug`
 
 ## Changelog
 
