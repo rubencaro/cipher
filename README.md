@@ -142,6 +142,10 @@ This is a master signature. If you put this binary as `signature` on your url, t
 
 ## Changelog
 
+### 1.0.4
+
+* Fix app name on `env` helper
+
 ### 1.0.3
 
 * Fix bug when ignoring multiple params

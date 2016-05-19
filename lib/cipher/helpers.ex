@@ -7,7 +7,7 @@ defmodule Cipher.Helpers do
     Convenience to get environment bits. Avoid all that repetitive
     `Application.get_env( :myapp, :blah, :blah)` noise.
   """
-  def env(key, default \\ nil), do: env(Mix.Project.get!.project[:app], key, default)
+  def env(key, default \\ nil), do: env(:cipher, key, default)
   def env(app, key, default), do: Application.get_env(app, key, default)
 
   @doc """
