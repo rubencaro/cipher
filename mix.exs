@@ -6,14 +6,8 @@ defmodule Cipher.Mixfile do
      version: "1.0.3",
      elixir: "~> 1.2",
      package: package,
-     description: """
-        Elixir crypto library to encrypt/decrypt arbitrary binaries. It uses
-        Erlang Crypto, so it's not big deal. Mostly a collection of helpers
-        wrapping it. It allows to use a crypted key to validate signed requests.
-        The exact same cipher is implemented for Python, Ruby and Elixir, so it
-        can be used to integrate apps from different languages.
-      """,
-      deps: deps]
+     description: "Elixir crypto library to encrypt/decrypt arbitrary binaries.",
+     deps: deps]
   end
 
   defp package do
