@@ -41,9 +41,9 @@ defmodule CipherTest do
 
   test "it works ignoring some too" do
     url = "/bla/bla"
-    s = "#{url}" |> C.sign_url(ignore: ["source"])
+    s = "#{url}" |> C.sign_url(ignore: ["source", "source2"])
     assert {:ok, _} = C.validate_signed_url(s)
-    assert {:ok, _} = C.validate_signed_url(s <> "&source=crappysource")
+    assert {:ok, _} = C.validate_signed_url(s <> "&source=crappysource&source2=crappysecondsource")
     assert {:error, _} = C.validate_signed_url(s <> "&other=crappysource")
   end
 

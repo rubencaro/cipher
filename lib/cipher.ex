@@ -235,7 +235,7 @@ defmodule Cipher do
   end
   defp pop_signature(dirty_url, popped) do
     clean_url = String.slice(dirty_url, 0..-2)
-    case String.split(popped, "&") do
+    case String.split(popped, "&", parts: 2) do
       [signature, rest] -> {clean_url, signature, rest}
       _ -> {clean_url, popped, ""}
     end

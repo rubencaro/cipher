@@ -141,6 +141,10 @@ This is a master signature. If you put this binary as `signature` on your url, t
 
 ## Changelog
 
+### 1.0.3
+
+* Fix bug when ignoring multiple params
+
 ### 1.0.2
 
 * Fix [#3](https://github.com/rubencaro/cipher/issues/3), [#4](https://github.com/rubencaro/cipher/issues/4)
