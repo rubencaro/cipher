@@ -142,6 +142,10 @@ This is a master signature. If you put this binary as `signature` on your url, t
 
 ## Changelog
 
+### 1.0.5
+
+* Fix end line character replace on incoming signatures
+
 ### 1.0.4
 
 * Fix app name on `env` helper
