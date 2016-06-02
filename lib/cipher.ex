@@ -236,9 +236,17 @@ defmodule Cipher do
   defp pop_signature(dirty_url, popped) do
     clean_url = String.slice(dirty_url, 0..-2)
     case String.split(popped, "&", parts: 2) do
-      [signature, rest] -> {clean_url, signature, rest}
-      _ -> {clean_url, popped, ""}
+      [signature, rest] -> {clean_url, clean_invalid_characters(signature), rest}
+      _ -> {clean_url, clean_invalid_characters(popped), ""}
     end
+  end
+
+  # Cleans invalid characters from the given url.
+  #
+  defp clean_invalid_characters(url) do
+    url
+      |> String.replace("%0A", "")
+      |> String.replace("%0a", "")
   end
 
 end

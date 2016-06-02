@@ -79,4 +79,16 @@ defmodule CipherTest do
     assert {:error, _} = "#{signed}&cb=123456&other=any" |> C.validate_signed_body(body)
   end
 
+  test "remove carry return character" do
+    signed_url = ("/bla/bla?p1=1&p2=2" |> Cipher.sign_url) <> "%0A"
+    assert {:ok, _} = Cipher.validate_signed_url(signed_url)
+  end
+
+  test "remove carry return character when there is rest field" do
+    url = "/bla/bla"
+    s = "#{url}" |> C.sign_url(ignore: ["source", "source2"])
+    s = s <> "%0A&source=crappysource&source2=crappysecondsource"
+    assert {:ok, _} = C.validate_signed_url(s)
+  end
+
 end
