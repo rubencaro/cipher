@@ -183,7 +183,7 @@ Note that for body signature validations (those required by POST, PUT, etc.) thi
 
 ## Changelog
 
-### master
+### 1.1.0
 
 * Add `ValidatePlug`
 * Add mapped body signing
