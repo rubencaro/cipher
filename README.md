@@ -149,16 +149,43 @@ This is a master signature. If you put this binary as `signature` on your url, t
 |> Cipher.validate_signed_url  # {:ok, %{}}
 ```
 
+## Use with Plug applications
+
+Cipher provides `ValidatePlug`, a plug that uses Cipher to validate signatures and halt with 401 when they are not valid.
+Use it as any other plug:
+
+```elixir
+plug Cipher.ValidatePlug
+```
+
+You can pass an `error_callback` that will be called right before sending the 401 response. This callback is meant to let the user do things like logging when validation fails. You should not call `send_resp` or `halt` over the `conn`, as that will already be done by the plug.
+```elixir
+# ...
+plug Cipher.ValidatePlug, error_callback: &MyApp.my_validation_error_logging_callback/2
+# ...
+
+def my_validation_error_logging_callback(conn, error) do
+  # Do something with the `error` message and the `conn`, just like:
+  Logger.info(error)
+  # right before the plug halts with 401
+end
+
+# ...
+```
+
+Note that for body signature validations (those required by POST, PUT, etc.) this plug requires that the signature is made using `Cipher.sign_url_from_mapped_body`. This is due to the way `Plug` parses the request body. The body can be read only once, and it is already read by the `Plug.Parsers` plug. By the time it gets to the `ValidatePlug` it has already been parsed to a `Map`, so the signature must have been done over the mapped structure of data instead of the plain text encoded body.
+
+
 ## TODOs
 
 * Improve error messages
-* Add simple `Plug`
 * Add large body signing
 
 ## Changelog
 
 ### master
 
+* Add `ValidatePlug`
 * Add mapped body signing
 
 ### 1.0.5
