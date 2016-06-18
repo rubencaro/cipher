@@ -126,6 +126,20 @@ signed = Cipher.sign_url_from_body(url, body, ignore: ["cb"])
 assert {:error, _} = "#{signed}&other=123456" |> Cipher.validate_signed_body(body)
 ```
 
+### Mapped body
+
+When the body is to be validated after parse time (as in a simple `Plug` pipeline, where body can be read only once, and it is read by `Plug.Parsers`) you should sign it using `sign_url_from_mapped_body/2`, passing the body as a `Map`. Like this:
+
+```elixir
+url = "/bla/bla"
+raw_body = %{"hola": " qué tal ｸｿ"}
+signed = Cipher.sign_url_from_mapped_body(url, raw_body, ignore: ["cb"])
+# "/bla/bla?signature=HdlsREqEP9hJmP94..."
+{:ok, _} = "#{signed}" |> Cipher.validate_signed_body(body)
+{:ok, _} = "#{signed}&cb=123456" |> Cipher.validate_signed_body(body)
+assert {:error, _} = "#{signed}&other=123456" |> Cipher.validate_signed_body(body)
+```
+
 ## Magic Token
 
 This is a master signature. If you put this binary as `signature` on your url, then it will always validate. This is useful for development, debugging, private network use, etc. You put your chosen `magic_token` on your `config.exs` and you are good to go.
@@ -139,8 +153,13 @@ This is a master signature. If you put this binary as `signature` on your url, t
 
 * Improve error messages
 * Add simple `Plug`
+* Add large body signing
 
 ## Changelog
+
+### master
+
+* Add mapped body signing
 
 ### 1.0.5
 

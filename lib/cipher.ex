@@ -128,6 +128,30 @@ defmodule Cipher do
   def sign_url_from_body(url, body, payload \\ %{}), do: sign(url, body, payload)
 
   @doc """
+    The URL is signed by getting a MD5 hash from the sorted data values, ciphering that hash,
+    and appending it as the last query parameter of the URL.
+
+    The given mapped_body must be a map.
+  """
+  def sign_url_from_mapped_body(url, mapped_body, payload \\ %{}) when is_map(mapped_body) do
+    base = mapped_body |> to_base
+    sign(url, base, payload)
+  end
+
+  # Generate a cipherable base from given `data`, being `data` any erlang term.
+  # This should be the same for every term with the same data, no matter the order.
+  # Get every key and value from given map, sort them alphabetically, and the join them.
+  #
+  # If `data` is a map, then it is sorted first, then converted to binary.
+  #
+  defp to_base(data) when is_map(data) do
+    data
+    |> Enum.sort
+    |> Enum.map_join(fn({k,v})-> "#{to_base(k)}#{to_base(v)}" end)
+  end
+  defp to_base(data), do: data |> to_string
+
+  @doc """
     Decrypts `ciphered`, and compare with an MD5 hash got from base.
     Returns `{:error, reason}` if decryption failed, or if comparison failed.
     `{:ok, payload}` otherwise.
@@ -163,7 +187,7 @@ defmodule Cipher do
 
   # Check if signature (which is derived from `base`) matches the one in `parsed`
   #
-  defp validate_base(parsed, base) do
+  defp validate_base(parsed, base) when is_binary(base) do
     signature = :crypto.hash(:md5, base)
                 |> Cipher.Digest.hexdigest
     read_signature = String.slice(parsed["md5"], 0..-9) # removing pepper from parsed
@@ -171,6 +195,10 @@ defmodule Cipher do
       true -> {:ok, parsed}
       false -> {:error, "Bad signature"}
     end
+  end
+  defp validate_base(parsed, mapped_body) do
+    base = mapped_body |> to_base
+    validate_base(parsed, base)
   end
 
   @doc """
@@ -190,6 +218,8 @@ defmodule Cipher do
 
   @doc """
     Validate given signed URL + body.
+    If body is a binary, it will be validated as if signed using `sign_url_from_body/2`.
+    Else it will be validated as if signed using `sign_url_from_mapped_body/2`.
 
     `{:ok, payload}` or `{:error, reason}` are returned.
   """

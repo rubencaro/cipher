@@ -79,6 +79,39 @@ defmodule CipherTest do
     assert {:error, _} = "#{signed}&cb=123456&other=any" |> C.validate_signed_body(body)
   end
 
+  test "Magic Token works with signed mapped body" do
+    url = "/bla/bla"
+    body = %{"hola": " qué tal ｸｿ"} |> Poison.encode! |> Poison.decode!
+    assert {:ok, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}X" |> C.validate_signed_body(body)
+  end
+
+  test "validate_signed_mapped_body" do
+    url = "/bla/bla"
+    # body is signed, then JSON encoded, then sent, then JSON decoded, then validated
+    raw_body = %{"hola": " qué tal ｸｿ", "ymás": "ymás"}
+    body = raw_body |> Poison.encode! |> Poison.decode!
+    assert {:error, _} = "#{url}" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{url}?signature=badhash" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{url}?asdkjh=sdfklh&signature=badhash" |> C.validate_signed_body(body)
+    assert {:ok, _} = "#{url}" |> C.sign_url_from_mapped_body(raw_body) |> C.validate_signed_body(body)
+    # reordered works the same
+    raw_body = %{"ymás": "ymás", "hola": " qué tal ｸｿ"}
+    assert {:ok, _} = "#{url}" |> C.sign_url_from_mapped_body(raw_body) |> C.validate_signed_body(body)
+  end
+
+  test "signing mapped body also ignores params" do
+    url = "/bla/bla"
+    # body is signed, then JSON encoded, then sent, then JSON decoded, then validated
+    raw_body = %{"hola": " qué tal ｸｿ"}
+    body = raw_body |> Poison.encode! |> Poison.decode!
+    signed = C.sign_url_from_mapped_body(url, raw_body, ignore: ["cb"])
+    assert {:ok, _} = "#{signed}" |> C.validate_signed_body(body)
+    assert {:ok, _} = "#{signed}&cb=123456" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{signed}&other=123456" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{signed}&cb=123456&other=any" |> C.validate_signed_body(body)
+  end
+
   test "remove carry return character" do
     signed_url = ("/bla/bla?p1=1&p2=2" |> Cipher.sign_url) <> "%0A"
     assert {:ok, _} = Cipher.validate_signed_url(signed_url)
