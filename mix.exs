@@ -19,7 +19,7 @@ defmodule Cipher.Mixfile do
 
   defp deps do
     [{:poison, "~> 2.0"},
-     {:plug, "~> 1.0"}]
+     {:plug, "~> 1.1"}]
   end
 
 end
