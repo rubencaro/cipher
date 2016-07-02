@@ -184,6 +184,10 @@ Note that for body signature validations (those required by POST, PUT, etc.) thi
 
 ## Changelog
 
+### 1.1.2
+
+* Upgrade `plug`
+
 ### 1.1.1
 
 * Fix `plug` dependency
