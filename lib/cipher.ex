@@ -95,7 +95,7 @@ defmodule Cipher do
     by `validate_signature/3`.
 
     Be aware that `payload` must be a `Map`, and that some keys, such as
-    `md5` or `ignore`, will be used internally. Keep things namespaced in there
+    `md5` or `deny`, will be used internally. Keep things namespaced in there
     and there will be no collisions.
   """
   def sign(url, base), do: sign(url, base, %{})
@@ -166,22 +166,22 @@ defmodule Cipher do
   # Check if parsed data looks good, then go on validating base.
   #
   defp validate_parsed_signature(parsed, base, rest) do
-    ignored = parsed |> Map.get("ignore", [])
+    denied = parsed |> Map.get("deny", [])
     rest = rest |> String.split("&", trim: true)
-    case validate_ignored(ignored, rest) do
+    case validate_denied(denied, rest) do
       :ok -> validate_base(parsed, base)
       any -> any
     end
   end
 
-  # Check if every extra param was explicitly ignored
+  # Check if every extra param was explicitly denied
   #
-  defp validate_ignored(_, []), do: :ok
-  defp validate_ignored(ignored, [r | rest]) do
+  defp validate_denied(_, []), do: :ok
+  defp validate_denied(denied, [r | rest]) do
     n = r |> String.split("=") |> List.first
-    case n in ignored do
-      true -> validate_ignored(ignored, rest)
-      false -> {:error, "Not ignored or signed: #{r}"}
+    case n in denied do
+      true -> {:error, "Denied: #{r}"}
+      false -> validate_denied(denied, rest)
     end
   end
 

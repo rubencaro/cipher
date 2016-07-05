@@ -81,24 +81,24 @@ Any changes to the signed URL `"/bla/bla?p1=1&p2=2"` will return `{:error, reaso
 
 You can choose to sign a URL but then add some parameters to the query string that may not be signed, such as a `cachebuster`.
 
-For that you can use `sign_url/2`, which accepts a payload to be included on the crypted signature. If you add a `ignore` list, then any parameter on that list will be accepted.
+For that you can use `sign_url/2`, which accepts a payload to be included on the crypted signature. If you add a `deny` list, then any parameter on that list will be rejected.
 
 ```elixir
-signed = "/bla/bla?p1=1&p2=2" |> Cipher.sign_url(ignore: ["cachebuster"])
+signed = "/bla/bla?p1=1&p2=2" |> Cipher.sign_url(deny: ["p1"])
 
-"#{signed}&cachebuster=123456789" |> Cipher.validate_signed_url  
+"#{signed}&cachebuster=123456789" |> Cipher.validate_signed_url
 #   {:ok,
-#   %{"ignore" => ["cachebuster"],
-#     "md5" => "86e359da7ab4886f3525ac2b9c5edc5b  971036"}}
+#   %{"deny" => ["p1"],
+#     "md5" => "86e359da7ab4886f3525ac2b9c5edc5b  837505"}}
 
-"#{signed}&cachebuster=123456789&other=parm"
-|> Cipher.validate_signed_url  # {:error, %MatchError{term: :error}}
+"#{signed}&cachebuster=123456789&p1=parm"
+|> Cipher.validate_signed_url  # {:error, "Denied: p1=parm"}
 
 ```
 
 ### Concealed params
 
-Note you can use `sign_url/2` to pass any data within the signature itself, just as you do with the `ignore` list. Any payload will be returned by `validate_signed_url/1`.
+Note you can use `sign_url/2` to pass any data within the signature itself, just as you do with the `deny` list. Any payload will be returned by `validate_signed_url/1`.
 
 ```elixir
 signed = "/bla/bla?p1=1" |> Cipher.sign_url(mydata: "yes, any data")
@@ -119,11 +119,11 @@ Helpers are `sign_url_from_body/2` and `validate_signed_body/1`. They put and va
 ```elixir
 url = "/bla/bla"
 body = Poison.encode! %{"hola": " qué tal ｸｿ"}
-signed = Cipher.sign_url_from_body(url, body, ignore: ["cb"])
+signed = Cipher.sign_url_from_body(url, body, deny: ["cb"])
 # "/bla/bla?signature=HdlsREqEP9hJmP94..."
 {:ok, _} = "#{signed}" |> Cipher.validate_signed_body(body)
-{:ok, _} = "#{signed}&cb=123456" |> Cipher.validate_signed_body(body)
-assert {:error, _} = "#{signed}&other=123456" |> Cipher.validate_signed_body(body)
+{:error, _} = "#{signed}&cb=123456" |> Cipher.validate_signed_body(body)
+assert {:ok, _} = "#{signed}&other=123456" |> Cipher.validate_signed_body(body)
 ```
 
 ### Mapped body
@@ -133,10 +133,10 @@ When the body is to be validated after parse time (as in a simple `Plug` pipelin
 ```elixir
 url = "/bla/bla"
 raw_body = %{"hola": " qué tal ｸｿ"}
-signed = Cipher.sign_url_from_mapped_body(url, raw_body, ignore: ["cb"])
+signed = Cipher.sign_url_from_mapped_body(url, raw_body, deny: ["cb"])
 # "/bla/bla?signature=HdlsREqEP9hJmP94..."
 {:ok, _} = "#{signed}" |> Cipher.validate_signed_body(body)
-{:ok, _} = "#{signed}&cb=123456" |> Cipher.validate_signed_body(body)
+{:error, _} = "#{signed}&cb=123456" |> Cipher.validate_signed_body(body)
 assert {:error, _} = "#{signed}&other=123456" |> Cipher.validate_signed_body(body)
 ```
 

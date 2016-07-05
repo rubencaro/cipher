@@ -41,10 +41,10 @@ defmodule CipherTest do
 
   test "it works ignoring some too" do
     url = "/bla/bla"
-    s = "#{url}" |> C.sign_url(ignore: ["source", "source2"])
+    s = "#{url}" |> C.sign_url(deny: ["source", "source2"])
     assert {:ok, _} = C.validate_signed_url(s)
-    assert {:ok, _} = C.validate_signed_url(s <> "&source=crappysource&source2=crappysecondsource")
-    assert {:error, _} = C.validate_signed_url(s <> "&other=crappysource")
+    assert {:ok, _} = C.validate_signed_url(s <> "&other=crappysource")
+    assert {:error, _} = C.validate_signed_url(s <> "&source=crappysource&source2=crappysecondsource")
   end
 
   test "Magic Token works with url" do
@@ -69,13 +69,13 @@ defmodule CipherTest do
     assert {:ok, _} = "#{url}" |> C.sign_url_from_body(body) |> C.validate_signed_body(body)
   end
 
-  test "signing body also ignores params" do
+  test "signing body also denies params" do
     url = "/bla/bla"
     body = Poison.encode! %{"hola": " qué tal ｸｿ"}
-    signed = C.sign_url_from_body(url, body, ignore: ["cb"])
+    signed = C.sign_url_from_body(url, body, deny: ["cb"])
     assert {:ok, _} = "#{signed}" |> C.validate_signed_body(body)
-    assert {:ok, _} = "#{signed}&cb=123456" |> C.validate_signed_body(body)
-    assert {:error, _} = "#{signed}&other=123456" |> C.validate_signed_body(body)
+    assert {:ok, _} = "#{signed}&other=123456" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{signed}&cb=123456" |> C.validate_signed_body(body)
     assert {:error, _} = "#{signed}&cb=123456&other=any" |> C.validate_signed_body(body)
   end
 
@@ -100,15 +100,15 @@ defmodule CipherTest do
     assert {:ok, _} = "#{url}" |> C.sign_url_from_mapped_body(raw_body) |> C.validate_signed_body(body)
   end
 
-  test "signing mapped body also ignores params" do
+  test "signing mapped body also denies params" do
     url = "/bla/bla"
     # body is signed, then JSON encoded, then sent, then JSON decoded, then validated
     raw_body = %{"hola": " qué tal ｸｿ"}
     body = raw_body |> Poison.encode! |> Poison.decode!
-    signed = C.sign_url_from_mapped_body(url, raw_body, ignore: ["cb"])
+    signed = C.sign_url_from_mapped_body(url, raw_body, deny: ["cb"])
     assert {:ok, _} = "#{signed}" |> C.validate_signed_body(body)
-    assert {:ok, _} = "#{signed}&cb=123456" |> C.validate_signed_body(body)
-    assert {:error, _} = "#{signed}&other=123456" |> C.validate_signed_body(body)
+    assert {:ok, _} = "#{signed}&other=123456" |> C.validate_signed_body(body)
+    assert {:error, _} = "#{signed}&cb=123456" |> C.validate_signed_body(body)
     assert {:error, _} = "#{signed}&cb=123456&other=any" |> C.validate_signed_body(body)
   end
 
@@ -119,7 +119,7 @@ defmodule CipherTest do
 
   test "remove carry return character when there is rest field" do
     url = "/bla/bla"
-    s = "#{url}" |> C.sign_url(ignore: ["source", "source2"])
+    s = "#{url}" |> C.sign_url()
     s = s <> "%0A&source=crappysource&source2=crappysecondsource"
     assert {:ok, _} = C.validate_signed_url(s)
   end
