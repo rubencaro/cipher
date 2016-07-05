@@ -77,7 +77,7 @@ Any changes to the signed URL `"/bla/bla?p1=1&p2=2"` will return `{:error, reaso
 |> Cipher.validate_signed_url  # {:error, "Bad signature"}
 ```
 
-### Ignored params
+### Denied params
 
 You can choose to sign a URL but then add some parameters to the query string that may not be signed, such as a `cachebuster`.
 
