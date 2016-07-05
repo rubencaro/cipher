@@ -133,11 +133,12 @@ When the body is to be validated after parse time (as in a simple `Plug` pipelin
 ```elixir
 url = "/bla/bla"
 raw_body = %{"hola": " qué tal ｸｿ"}
+body = raw_body |> Poison.encode! |> Poison.decode!
 signed = Cipher.sign_url_from_mapped_body(url, raw_body, deny: ["cb"])
 # "/bla/bla?signature=HdlsREqEP9hJmP94..."
 {:ok, _} = "#{signed}" |> Cipher.validate_signed_body(body)
 {:error, _} = "#{signed}&cb=123456" |> Cipher.validate_signed_body(body)
-assert {:error, _} = "#{signed}&other=123456" |> Cipher.validate_signed_body(body)
+assert {:ok, _} = "#{signed}&other=123456" |> Cipher.validate_signed_body(body)
 ```
 
 ## Magic Token
