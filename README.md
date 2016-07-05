@@ -15,7 +15,7 @@ This way it can be used from Python, Ruby or Elixir apps.
 
 ## Use
 
-Just add `{:cipher, ">= 1.1.1"}` to your `mix.exs`.
+Just add `{:cipher, ">= 1.2.0"}` to your `mix.exs`.
 
 Then add your keys to `config.exs`, **they are needed to compile `Cipher`**:
 ```elixir
@@ -184,6 +184,10 @@ Note that for body signature validations (those required by POST, PUT, etc.) thi
 * Separate package for `ValidatePlug`
 
 ## Changelog
+
+### 1.2.0
+
+* Add denied params, remove ignored ones.
 
 ### 1.1.1
 
