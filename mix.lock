@@ -1,3 +1,5 @@
-%{"mime": {:hex, :mime, "1.0.0", "b63027733bba00b1013bad14e25dc8b6629ecb817731544a88a0fd14f2a55685", [:mix], []},
+%{"earmark": {:hex, :earmark, "1.0.1", "2c2cd903bfdc3de3f189bd9a8d4569a075b88a8981ded9a0d95672f6e2b63141", [:mix], []},
+  "ex_doc": {:hex, :ex_doc, "0.13.0", "aa2f8fe4c6136a2f7cfc0a7e06805f82530e91df00e2bff4b4362002b43ada65", [:mix], [{:earmark, "~> 1.0", [hex: :earmark, optional: false]}]},
+  "mime": {:hex, :mime, "1.0.0", "b63027733bba00b1013bad14e25dc8b6629ecb817731544a88a0fd14f2a55685", [:mix], []},
   "plug": {:hex, :plug, "1.2.0-rc.0", "08a3c6597103b7aa72f112a8d80eae7dea961bd082632e34778aee07800f70e8", [:mix], [{:cowboy, "~> 1.0", [hex: :cowboy, optional: true]}, {:mime, "~> 1.0", [hex: :mime, optional: false]}]},
   "poison": {:hex, :poison, "2.1.0", "f583218ced822675e484648fa26c933d621373f01c6c76bd00005d7bd4b82e27", [:mix], []}}
