@@ -3,8 +3,8 @@ defmodule Cipher.Mixfile do
 
   def project do
     [app: :cipher,
-     version: "1.2.0",
-     elixir: "~> 1.2",
+     version: "1.2.1",
+     elixir: "~> 1.3",
      package: package,
      description: "Elixir crypto library to encrypt/decrypt arbitrary binaries.",
      deps: deps]
@@ -19,7 +19,7 @@ defmodule Cipher.Mixfile do
 
   defp deps do
     [{:poison, "~> 2.0"},
-     {:plug, "~> 1.1"}]
+     {:plug, ">= 1.2.0-rc.0"}]
   end
 
 end
