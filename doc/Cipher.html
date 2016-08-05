@@ -1,0 +1,477 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.13.0">
+    <title>Cipher – cipher v1.2.1</title>
+    <link rel="stylesheet" href="dist/app-9c1e3d5aa2.css" />
+    
+      <link rel="canonical" href="https://hexdocs.pm/cipher/Cipher.html" />
+    
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        cipher
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v1.2.1
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">cipher v1.2.1</small>
+        Cipher
+        
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p>  Helpers to encrypt and decrypt data.</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#cipher/1">cipher(data)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns the JSON converted and encrypted version of given data</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#decrypt/1">decrypt(crypted)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns decrypted string contained in given <code class="inline">crypted</code> string</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#encrypt/1">encrypt(data)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns encrypted string containing given <code class="inline">data</code> string</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#parse/1">parse(crypted)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Returns the JSON parsed data of the given crypted string,
+  with labeled tuples: <code class="inline">{:ok, data}</code> or <code class="inline">{:error, reason}</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#sign/2">sign(url, base)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Gets signature for given <code class="inline">base</code> and appends as a param to <code class="inline">url</code>.
+  Returns <code class="inline">url</code> with appended param.
+  Given <code class="inline">payload</code> is contained within the signature and will be returned
+  by <a href="#validate_signature/3"><code class="inline">validate_signature/3</code></a></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#sign/3">sign(url, base, payload)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#sign_url/2">sign_url(url, payload \\ %{})</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>An URL is signed by getting a hash from it, ciphering that hash,
+  and appending it as the last query parameter</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#sign_url_from_body/3">sign_url_from_body(url, body, payload \\ %{})</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>The URL is signed by getting a MD5 hash from the sorted data values, ciphering that hash,
+  and appending it as the last query parameter of the URL</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#sign_url_from_mapped_body/3">sign_url_from_mapped_body(url, mapped_body, payload \\ %{})</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>The URL is signed by getting a MD5 hash from the sorted data values, ciphering that hash,
+  and appending it as the last query parameter of the URL</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#validate_signature/3">validate_signature(ciphered, base, rest)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Decrypts <code class="inline">ciphered</code>, and compare with an MD5 hash got from base.
+  Returns <code class="inline">{:error, reason}</code> if decryption failed, or if comparison failed.
+  <code class="inline">{:ok, payload}</code> otherwise</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#validate_signed_body/2">validate_signed_body(url, body)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Validate given signed URL + body.
+  If body is a binary, it will be validated as if signed using <code class="inline">sign_url_from_body/2</code>.
+  Else it will be validated as if signed using <code class="inline">sign_url_from_mapped_body/2</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#validate_signed_url/1">validate_signed_url(url)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Validate given signed URL</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+
+        </section>
+      
+
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="cipher/1">
+  <div class="detail-header">
+    <a href="#cipher/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">cipher(data)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Returns the JSON converted and encrypted version of given data:</p>
+<pre><code class="elixir">%{&quot;hola&quot;: &quot; qué tal ｸｿ&quot;}
+|&gt; Cipher.cipher  # &quot;qW0Voj3h4nglx4NPy8aLXVY5ze5V3OBu5IoaQTMUUbU%3D&quot;
+|&gt; Cipher.parse  #  {:ok, %{&quot;hola&quot; =&gt; &quot; qué tal ｸｿ&quot;}}</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="decrypt/1">
+  <div class="detail-header">
+    <a href="#decrypt/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">decrypt(crypted)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  Returns decrypted string contained in given <code class="inline">crypted</code> string</p>
+<pre><code class="elixir">  &quot;secret&quot;
+  |&gt; Cipher.encrypt  # &quot;KSHHdx0uyveYGY5PHqLAKw%3D%3D&quot;
+  |&gt; Cipher.decrypt  # &quot;secret&quot;</code></pre>
+<p>  Returns <code class="inline">{:error, &quot;Could not decode string &#39;yourstring&#39;&quot;}</code> if it failed in
+  the first stage of decryption (unescaping and decoding given string). That
+  means someone tampered your crypted data, or maybe the crypted string was
+  not transferred properly.</p>
+<p>  Returns <code class="inline">{:error, &quot;Could not decrypt string &#39;yourstring&#39;&quot;}</code> if it failed in
+  the last stage, the decryption itself. Usually means your decryption keys are
+  not the same that were used to encrypt. But may also be some cases were a
+  tampered or wrongly transferred string can be actually unescaped and decoded
+  successfully. They will fail in the decryption stage.</p>
+
+  </section>
+</div>
+<div class="detail" id="encrypt/1">
+  <div class="detail-header">
+    <a href="#encrypt/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">encrypt(data)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  Returns encrypted string containing given <code class="inline">data</code> string</p>
+<pre><code class="elixir">  &quot;secret&quot;
+  |&gt; Cipher.encrypt  # &quot;KSHHdx0uyveYGY5PHqLAKw%3D%3D&quot;
+  |&gt; Cipher.decrypt  # &quot;secret&quot;</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="parse/1">
+  <div class="detail-header">
+    <a href="#parse/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">parse(crypted)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  Returns the JSON parsed data of the given crypted string,
+  with labeled tuples: <code class="inline">{:ok, data}</code> or <code class="inline">{:error, reason}</code></p>
+<pre><code class="elixir">  %{&quot;hola&quot;: &quot; qué tal ｸｿ&quot;}
+  |&gt; Cipher.cipher  # &quot;qW0Voj3h4nglx4NPy8aLXVY5ze5V3OBu5IoaQTMUUbU%3D&quot;
+  |&gt; Cipher.parse  #  {:ok, %{&quot;hola&quot; =&gt; &quot; qué tal ｸｿ&quot;}}</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="sign/2">
+  <div class="detail-header">
+    <a href="#sign/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">sign(url, base)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  Gets signature for given <code class="inline">base</code> and appends as a param to <code class="inline">url</code>.
+  Returns <code class="inline">url</code> with appended param.
+  Given <code class="inline">payload</code> is contained within the signature and will be returned
+  by <a href="#validate_signature/3"><code class="inline">validate_signature/3</code></a>.</p>
+<p>  Be aware that <code class="inline">payload</code> must be a <code class="inline">Map</code>, and that some keys, such as
+  <code class="inline">md5</code> or <code class="inline">deny</code>, will be used internally. Keep things namespaced in there
+  and there will be no collisions.</p>
+
+  </section>
+</div>
+<div class="detail" id="sign/3">
+  <div class="detail-header">
+    <a href="#sign/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">sign(url, base, payload)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="sign_url/2">
+  <div class="detail-header">
+    <a href="#sign_url/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">sign_url(url, payload \\ %{})</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  An URL is signed by getting a hash from it, ciphering that hash,
+  and appending it as the last query parameter.</p>
+<pre><code class="elixir">  &quot;/bla/bla?p1=1&amp;p2=2&quot;
+  |&gt; Cipher.sign_url  # &quot;/bla/bla?p1=1&amp;p2=2&amp;signature=4B6WOiuD9N39K7p%2BnqNIljGh5F%2F%2BnHRQGZC9ih%2Bh%2BHGZc8Tz0KdRJXC%2B5M%2B8%2BHZ2mAXPh3jQcSRieTq4dGm5Ng%3D%3D&quot;</code></pre>
+
+  </section>
+</div>
+<div class="detail" id="sign_url_from_body/3">
+  <div class="detail-header">
+    <a href="#sign_url_from_body/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">sign_url_from_body(url, body, payload \\ %{})</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  The URL is signed by getting a MD5 hash from the sorted data values, ciphering that hash,
+  and appending it as the last query parameter of the URL.</p>
+
+  </section>
+</div>
+<div class="detail" id="sign_url_from_mapped_body/3">
+  <div class="detail-header">
+    <a href="#sign_url_from_mapped_body/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">sign_url_from_mapped_body(url, mapped_body, payload \\ %{})</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  The URL is signed by getting a MD5 hash from the sorted data values, ciphering that hash,
+  and appending it as the last query parameter of the URL.</p>
+<p>  The given mapped_body must be a map.</p>
+
+  </section>
+</div>
+<div class="detail" id="validate_signature/3">
+  <div class="detail-header">
+    <a href="#validate_signature/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">validate_signature(ciphered, base, rest)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  Decrypts <code class="inline">ciphered</code>, and compare with an MD5 hash got from base.
+  Returns <code class="inline">{:error, reason}</code> if decryption failed, or if comparison failed.
+  <code class="inline">{:ok, payload}</code> otherwise.</p>
+
+  </section>
+</div>
+<div class="detail" id="validate_signed_body/2">
+  <div class="detail-header">
+    <a href="#validate_signed_body/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">validate_signed_body(url, body)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  Validate given signed URL + body.
+  If body is a binary, it will be validated as if signed using <code class="inline">sign_url_from_body/2</code>.
+  Else it will be validated as if signed using <code class="inline">sign_url_from_mapped_body/2</code>.</p>
+<p>  <code class="inline">{:ok, payload}</code> or <code class="inline">{:error, reason}</code> are returned.</p>
+
+  </section>
+</div>
+<div class="detail" id="validate_signed_url/1">
+  <div class="detail-header">
+    <a href="#validate_signed_url/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">validate_signed_url(url)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>  Validate given signed URL.</p>
+<pre><code class="elixir">  &quot;/bla/bla?p1=1&amp;p2=2&amp;signature=4B6WOiuD9N39K7p%2BnqNIljGh5F%2F%2BnHRQGZC9ih%2Bh%2BHGZc8Tz0KdRJXC%2B5M%2B8%2BHZ2mAXPh3jQcSRieTq4dGm5Ng%3D%3D&quot;
+  |&gt; Cipher.validate_signed_url  # {:ok, %{&quot;md5&quot; =&gt; &quot;86e359da7ab4886f3525ac2b9c5edc5b  613146&quot;}}</code></pre>
+<p>  <code class="inline">{:ok, payload}</code> or <code class="inline">{:error, reason}</code> are returned.</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.13.0),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-21f1a20b9e.js"></script>
+  </body>
+</html>
+
