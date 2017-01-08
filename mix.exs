@@ -5,9 +5,9 @@ defmodule Cipher.Mixfile do
     [app: :cipher,
      version: "1.2.2",
      elixir: "~> 1.3",
-     package: package,
+     package: package(),
      description: "Elixir crypto library to encrypt/decrypt arbitrary binaries.",
-     deps: deps]
+     deps: deps()]
   end
 
   defp package do
