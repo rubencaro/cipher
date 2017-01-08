@@ -4,14 +4,14 @@ defmodule Cipher.Mixfile do
   def project do
     [app: :cipher,
      version: "1.2.3",
-     elixir: "~> 1.4",
+     elixir: ">= 1.3.0",
      package: package(),
      description: "Elixir crypto library to encrypt/decrypt arbitrary binaries.",
      deps: deps()]
   end
 
   defp package do
-    [contributors: ["Rubén Caro"],
+    [maintainers: ["Rubén Caro"],
      licenses: ["MIT"],
      links: %{github: "https://github.com/rubencaro/cipher",
               other_languages: "https://gist.github.com/rubencaro/9545060"}]
