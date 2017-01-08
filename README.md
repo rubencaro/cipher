@@ -185,6 +185,11 @@ Note that for body signature validations (those required by POST, PUT, etc.) thi
 
 ## Changelog
 
+### 1.2.3
+
+* Fix some bugs
+* Remove Elixir 1.4 warnings
+
 ### 1.2.0
 
 * Add denied params, remove ignored ones.
