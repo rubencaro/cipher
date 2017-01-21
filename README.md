@@ -4,14 +4,9 @@
 [![Hex Version](http://img.shields.io/hexpm/v/cipher.svg?style=flat)](https://hex.pm/packages/cipher)
 [![Hex Version](http://img.shields.io/hexpm/dt/cipher.svg?style=flat)](https://hex.pm/packages/cipher)
 
-Elixir crypto library to encrypt/decrypt arbitrary binaries. It uses
-[Erlang Crypto](http://www.erlang.org/doc/man/crypto.html), so it's not big
-deal. Mostly a collection of helpers wrapping it.
+Elixir crypto library to encrypt/decrypt arbitrary binaries. It uses [Erlang Crypto](http://www.erlang.org/doc/man/crypto.html), so it's not big deal. Mostly a collection of helpers wrapping it.
 
-This library allows us to use a crypted key to validate signed requests, with a
-cipher compatible with
-[this one](https://gist.github.com/rubencaro/9545060#file-gistfile3-ex).
-This way it can be used from Python, Ruby or Elixir apps.
+This library allows us to use a crypted key to validate signed requests, with a cipher compatible with [this one](https://gist.github.com/rubencaro/9545060#file-gistfile3-ex). This way it can be used from Python, Ruby or Elixir apps.
 
 ## Use
 
@@ -39,8 +34,8 @@ Now you can use bare `encrypt/1` and `decrypt/1`:
 
 When you decrypt non-valid strings you can get two kinds of errors:
 
-* `{:error, "Could not decode string 'yourstring'"}` if your string was tampered or wrongly transferred.
-* `{:error, "Could not decrypt string 'yourstring'"}` if your string was encrypted using different keys. Maybe some edge cases of tampering too.
+* `{:error, "Could not decode string 'yourstring'..."}` if your string was tampered or wrongly transferred.
+* `{:error, "Could not decrypt string 'yourstring'..."}` if your string was encrypted using different keys. Maybe some edge cases of tampering too.
 
 ## Cipher/Parse JSON
 
@@ -74,7 +69,7 @@ Any changes to the signed URL `"/bla/bla?p1=1&p2=2"` will return `{:error, reaso
 
 ```elixir
 "/bla/bla?p1=1&p2=3&signature=4B6WOiuD9N39K7p%2BnqNIljGh5F%2F%2BnHRQGZC9ih%2Bh%2BHGZc8Tz0KdRJXC%2B5M%2B8%2BHZ2mAXPh3jQcSRieTq4dGm5Ng%3D%3D"
-|> Cipher.validate_signed_url  # {:error, "Bad signature"}
+|> Cipher.validate_signed_url  # {:error, "Checksum did not match given base '/bla/bla?p1=1&p2=3'."}
 ```
 
 ### Denied params
@@ -92,7 +87,7 @@ signed = "/bla/bla?p1=1&p2=2" |> Cipher.sign_url(deny: ["p1"])
 #     "md5" => "86e359da7ab4886f3525ac2b9c5edc5b  837505"}}
 
 "#{signed}&cachebuster=123456789&p1=parm"
-|> Cipher.validate_signed_url  # {:error, "Denied: p1=parm"}
+|> Cipher.validate_signed_url  # {:error, "Parameter 'p1=parm' is not allowed by given signature. Denials: [\"p1\"]"}
 
 ```
 
@@ -179,11 +174,14 @@ Note that for body signature validations (those required by POST, PUT, etc.) thi
 
 ## TODOs
 
-* Improve error messages
 * Add large body signing
 * Separate package for `ValidatePlug`
 
 ## Changelog
+
+### 1.2.4
+
+* Improve error messages
 
 ### 1.2.3
 

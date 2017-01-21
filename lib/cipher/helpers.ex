@@ -23,8 +23,6 @@ defmodule Cipher.Helpers do
       msg = inspect(unquote(obj),unquote(inspect_opts))
       if String.length(msg) > 2, do: chain = chain ++ [:red, "\n\n#{msg}"]
 
-      # chain = chain ++ [:yellow, "\n\n#{inspect Process.info(self)}"]
-
       (chain ++ ["\n\n", :reset]) |> IO.ANSI.format(true) |> IO.puts
 
       unquote(obj)

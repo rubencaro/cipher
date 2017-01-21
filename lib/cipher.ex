@@ -6,6 +6,11 @@ defmodule Cipher do
     Helpers to encrypt and decrypt data.
   """
   # handy to have them around
+  unless H.env(:keyphrase) && H.env(:ivphrase) do
+    [:bright, :yellow, "\n",
+     "You need to configure both `keyphrase` and `ivphrase` to compile `Cipher`",
+     "\n", :reset] |> IO.ANSI.format(true) |> IO.puts
+  end
   @k H.env(:keyphrase) |> Cipher.Digest.generate_key
   @i H.env(:ivphrase) |> Cipher.Digest.generate_iv
 
@@ -32,12 +37,12 @@ defmodule Cipher do
     |> Cipher.decrypt  # "secret"
     ```
 
-    Returns `{:error, "Could not decode string 'yourstring'"}` if it failed in
+    Returns `{:error, "Could not decode string 'yourstring'..."}` if it failed in
     the first stage of decryption (unescaping and decoding given string). That
     means someone tampered your crypted data, or maybe the crypted string was
     not transferred properly.
 
-    Returns `{:error, "Could not decrypt string 'yourstring'"}` if it failed in
+    Returns `{:error, "Could not decrypt string 'yourstring'..."}` if it failed in
     the last stage, the decryption itself. Usually means your decryption keys are
     not the same that were used to encrypt. But may also be some cases were a
     tampered or wrongly transferred string can be actually unescaped and decoded
@@ -48,7 +53,7 @@ defmodule Cipher do
       {:ok, decoded} = crypted |> URI.decode_www_form |> Base.decode64
       do_decrypt(decoded)
     rescue
-      _ -> {:error, "Could not decode string '#{crypted}'"}
+      _ -> {:error, "Could not decode string '#{crypted}'. Maybe it was not transferred properly."}
     end
   end
 
@@ -56,7 +61,7 @@ defmodule Cipher do
     try do
       :crypto.block_decrypt(:aes_cbc128, @k, @i, decoded) |> depad
     rescue
-      _ -> {:error, "Could not decrypt string '#{decoded}'"}
+      _ -> {:error, "Could not decrypt string '#{decoded}'. Maybe it was encrypted with a different key."}
     end
   end
 
@@ -180,7 +185,7 @@ defmodule Cipher do
   defp validate_denied(denied, [r | rest]) do
     n = r |> String.split("=") |> List.first
     case n in denied do
-      true -> {:error, "Denied: #{r}"}
+      true -> {:error, "Parameter '#{r}' is not allowed by given signature. Denials: #{inspect denied}"}
       false -> validate_denied(denied, rest)
     end
   end
@@ -193,7 +198,7 @@ defmodule Cipher do
     read_signature = String.slice(parsed["md5"], 0..-9) # removing pepper from parsed
     case signature == read_signature do
       true -> {:ok, parsed}
-      false -> {:error, "Bad signature"}
+      false -> {:error, "Checksum did not match given base '#{base}'."}
     end
   end
   defp validate_base(parsed, mapped_body) do

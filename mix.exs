@@ -3,7 +3,7 @@ defmodule Cipher.Mixfile do
 
   def project do
     [app: :cipher,
-     version: "1.2.3",
+     version: "1.2.4",
      elixir: ">= 1.3.0",
      package: package(),
      description: "Elixir crypto library to encrypt/decrypt arbitrary binaries.",
