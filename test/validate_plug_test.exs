@@ -49,6 +49,21 @@ defmodule ValidatePlugTest do
     conn = conn(:get, url) |> P.call(error_callback: cb)
     assert conn.status == 401
     assert :yay = Agent.get(:cb_test_agent,&(&1))
+
+    url = "/bogus?p=1"
+    conn = conn(:get, url) |> P.call(error_callback: cb, test_mode: true)
+    assert conn.status != 401
+    assert :yay = Agent.get(:cb_test_agent,&(&1))
+  end
+
+  test "honors test_mode" do
+    url = "/bogus?p=1"
+    conn = conn(:get, url) |> P.call
+    assert conn.status == 401
+
+    url = "/bogus?p=1" |> C.sign_url
+    conn = conn(:get, url) |> P.call(test_mode: true)
+    assert conn.status != 401
   end
 
   defp send_body(verb, url, encoded_body) do
