@@ -49,9 +49,13 @@ defmodule Cipher.ValidatePlug do
         # call user fun if given
         if opts[:error_callback], do: opts[:error_callback].(conn, error)
 
-        conn
-        |> send_resp(401, "unauthorized")
-        |> halt
+        if opts[:test_mode] do
+          conn
+        else
+          conn
+          |> send_resp(401, "unauthorized")
+          |> halt
+        end
     end
   end
 
