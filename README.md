@@ -179,6 +179,10 @@ Note that for body signature validations (those required by POST, PUT, etc.) thi
 
 ## Changelog
 
+### 1.3.1
+
+* Support Poison 3.x
+
 ### 1.3.0
 
 * Add `test_mode` option to ease plug testing
