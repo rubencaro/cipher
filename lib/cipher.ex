@@ -110,7 +110,7 @@ defmodule Cipher do
     nexus = if String.contains?(url, "?"), do: "&", else: "?"
     signature = :crypto.hash(:md5, base) |> Cipher.Digest.hexdigest
     {_, _, micros} = :os.timestamp
-    pepper = micros |> Integer.to_string |> String.rjust(8) # 8 characters long
+    pepper = micros |> Integer.to_string |> String.pad_leading(8) # 8 characters long
     data = payload |> Map.merge(%{md5: signature <> pepper})
     url <> nexus <> "signature=" <> cipher(data)
   end
@@ -243,20 +243,19 @@ defmodule Cipher do
   end
 
   # Pad given string until its length is divisible by 16.
-  # It uses PKCS#7 padding.
+  # It uses PKCS#7 space padding.
   #
   defp pad(str, block_size \\ 16) do
     len = byte_size(str)
     utfs = len - String.length(str) # UTF chars are 2byte, ljust counts only 1
     pad_len = block_size - rem(len, block_size) - utfs
-    String.ljust(str, len + pad_len, pad_len) # PKCS#7 padding
+    String.pad_trailing(str, len + pad_len, " ") # PKCS#7 padding
   end
 
-  # Remove PKCS#7 padding from given string.
+  # Remove PKCS#7 space padding from given string.
   #
   defp depad(str) do
-    <<last>> = String.last str
-    String.rstrip str, last
+    String.trim_trailing(str, " ")
   end
 
   # Pops the signature param, which must be the last one.
