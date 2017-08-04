@@ -8,6 +8,7 @@ defmodule Cipher.Digest do
   def generate_key(phrase), do: :crypto.hash(:sha, phrase) |> hexdigest |> String.slice(0,16)
 
   @doc "Generates a suitable iv for encryption based on given `phrase`"
+  def generate_iv(phrase) when byte_size(phrase) < 16, do: raise ArgumentError, message: "ivphrase must be at least 16 bytes long"
   def generate_iv(phrase), do: phrase |> String.slice(0,16)
 
   @doc "Gets an usable string from a binary crypto hash"
