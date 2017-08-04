@@ -10,7 +10,7 @@ This library allows us to use a crypted key to validate signed requests, with a 
 
 ## Use
 
-Just add `{:cipher, ">= 1.3.1"}` to your `mix.exs`.
+Just add `{:cipher, ">= 1.3.2"}` to your `mix.exs`.
 
 Then add your keys to `config.exs`, **they are needed to compile `Cipher`**:
 ```elixir
@@ -178,6 +178,11 @@ Note that for body signature validations (those required by POST, PUT, etc.) thi
 * Separate package for `ValidatePlug`
 
 ## Changelog
+
+### 1.3.2
+
+* Add links to source on generated docs
+* Require ivphrase >= 16 bytes
 
 ### 1.3.1
 
