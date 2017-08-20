@@ -255,7 +255,8 @@ defmodule Cipher do
   # Remove PKCS#7 space padding from given string.
   #
   defp depad(str) do
-    String.trim_trailing(str, " ")
+    <<last>> = String.last(str)
+    String.replace_trailing(str, <<last::utf8>>, "")
   end
 
   # Pops the signature param, which must be the last one.
