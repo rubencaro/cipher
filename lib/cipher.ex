@@ -5,6 +5,8 @@ defmodule Cipher do
   @moduledoc """
     Helpers to encrypt and decrypt data.
   """
+  # allows pad and depad to be used in tests directly
+  @compile if Mix.env == :test, do: :export_all
   # handy to have them around
   unless H.env(:keyphrase) && H.env(:ivphrase) do
     [:bright, :yellow, "\n",
@@ -255,8 +257,24 @@ defmodule Cipher do
   end
 
   # Remove PKCS#7 space padding from given string.
-  #
+  # Legacy support for blocks previously padded with whitespace
   defp depad(str) do
+    with true <- String.last(str) == " ", # if trailing isn't whitespace, we know it's using v2
+         {_, trailing} <- String.split_at(str, -32),
+         graphemes <- String.graphemes(trailing),
+         false <- Enum.all?(graphemes, fn (char) -> char == " " end) do  # if every character isn't whitespace use depad_v1
+      depad_v1(str)
+    else
+      _ -> depad_v2(str)
+    end
+  end
+
+  defp depad_v1(str) do
+    <<last>> = String.last(str)
+    String.replace_trailing(str, <<last :: utf8>>, "")
+  end
+
+  defp depad_v2(str) do
     <<last>> = String.last str # PKCS#7 padding value of each byte equals total bytes of padding
     pad_len = last * (-1)
     {depadded, _} = String.split_at(str, pad_len)
