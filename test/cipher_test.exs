@@ -12,6 +12,11 @@ defmodule CipherTest do
     assert {:error, _} = "nonsense" |> C.decrypt  # decrypt fails
   end
 
+  test "whitespace at end of message encrypted/decrypted" do
+    s = "               "
+    assert s == s |> C.encrypt |> C.decrypt
+  end
+
   test "parse ciphered hash" do
     h = %{"hola" => " qué tal ｸｿ"}
     s = Poison.encode! h

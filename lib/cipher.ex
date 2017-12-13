@@ -247,16 +247,20 @@ defmodule Cipher do
   #
   defp pad(str, block_size \\ 16) do
     len = byte_size(str)
-    utfs = len - String.length(str) # UTF chars are 2byte, ljust counts only 1
-    pad_len = block_size - rem(len, block_size) - utfs
-    String.pad_trailing(str, len + pad_len, " ") # PKCS#7 padding
+    pad_len = block_size - rem(len, block_size)
+    padding = <<pad_len>>
+              |> List.duplicate(pad_len)
+              |> Enum.join("")
+    str <> padding
   end
 
   # Remove PKCS#7 space padding from given string.
   #
   defp depad(str) do
-    <<last>> = String.last(str)
-    String.replace_trailing(str, <<last::utf8>>, "")
+    <<last>> = String.last str # PKCS#7 padding value of each byte equals total bytes of padding
+    pad_len = last * (-1)
+    {depadded, _} = String.split_at(str, pad_len)
+    depadded
   end
 
   # Pops the signature param, which must be the last one.
