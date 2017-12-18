@@ -245,9 +245,11 @@ defmodule Cipher do
   end
 
   # Pad given string until its length is divisible by 16.
-  # It uses PKCS#7 space padding.
+  # It uses PKCS#7 byte value padding.
+  # The value of each added byte is the number of bytes that are added
   #
-  defp pad(str, block_size \\ 16) do
+  defp pad(str) do
+    block_size = 16
     len = byte_size(str)
     pad_len = block_size - rem(len, block_size)
     padding = <<pad_len>>
@@ -256,26 +258,25 @@ defmodule Cipher do
     str <> padding
   end
 
-  # Remove PKCS#7 space padding from given string.
   # Legacy support for blocks previously padded with whitespace
   defp depad(str) do
-    with true <- String.last(str) == " ", # if trailing isn't whitespace, we know it's using v2
-         {_, trailing} <- String.split_at(str, -32),
-         graphemes <- String.graphemes(trailing),
-         false <- Enum.all?(graphemes, fn (char) -> char == " " end) do  # if every character isn't whitespace use depad_v1
-      depad_v1(str)
-    else
+    case String.last(str) do
+      " " -> depad_v1(str)
       _ -> depad_v2(str)
     end
   end
 
+  # Remove PKCS#7 space padding from given string.
+  # Legacy function to prevent breaking padding for existing encrypted messages
   defp depad_v1(str) do
     <<last>> = String.last(str)
     String.replace_trailing(str, <<last :: utf8>>, "")
   end
 
+  # Remove PKCS#7 byte padding from given string.
+  # padding value of each byte equals total bytes of padding
   defp depad_v2(str) do
-    <<last>> = String.last str # PKCS#7 padding value of each byte equals total bytes of padding
+    <<last>> = String.last str
     pad_len = last * (-1)
     {depadded, _} = String.split_at(str, pad_len)
     depadded

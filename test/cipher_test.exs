@@ -17,14 +17,6 @@ defmodule CipherTest do
     assert s == s |> C.encrypt |> C.decrypt
   end
 
-  test "legacy padding doesn't affect padded with block size of 32" do
-    s = "                                "
-    depadded = s
-    |> C.pad(32)
-    |> C.depad()
-    assert depadded == s
-  end
-
   test "legacy padding compatible with new depad" do
     # padded block with 8 whitespace for 16 byte block size
     s = "12345678"
