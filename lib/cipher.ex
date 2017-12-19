@@ -5,6 +5,8 @@ defmodule Cipher do
   @moduledoc """
     Helpers to encrypt and decrypt data.
   """
+  # allows pad and depad to be used in tests directly
+  @compile if Mix.env == :test, do: :export_all
   # handy to have them around
   unless H.env(:keyphrase) && H.env(:ivphrase) do
     [:bright, :yellow, "\n",
@@ -243,20 +245,41 @@ defmodule Cipher do
   end
 
   # Pad given string until its length is divisible by 16.
-  # It uses PKCS#7 space padding.
+  # It uses PKCS#7 byte value padding.
+  # The value of each added byte is the number of bytes that are added
   #
-  defp pad(str, block_size \\ 16) do
+  defp pad(str) do
+    block_size = 16
     len = byte_size(str)
-    utfs = len - String.length(str) # UTF chars are 2byte, ljust counts only 1
-    pad_len = block_size - rem(len, block_size) - utfs
-    String.pad_trailing(str, len + pad_len, " ") # PKCS#7 padding
+    pad_len = block_size - rem(len, block_size)
+    padding = <<pad_len>>
+              |> List.duplicate(pad_len)
+              |> Enum.join("")
+    str <> padding
+  end
+
+  # Legacy support for blocks previously padded with whitespace
+  defp depad(str) do
+    case String.last(str) do
+      " " -> depad_v1(str)
+      _ -> depad_v2(str)
+    end
   end
 
   # Remove PKCS#7 space padding from given string.
-  #
-  defp depad(str) do
+  # Legacy function to prevent breaking padding for existing encrypted messages
+  defp depad_v1(str) do
     <<last>> = String.last(str)
-    String.replace_trailing(str, <<last::utf8>>, "")
+    String.replace_trailing(str, <<last :: utf8>>, "")
+  end
+
+  # Remove PKCS#7 byte padding from given string.
+  # padding value of each byte equals total bytes of padding
+  defp depad_v2(str) do
+    <<last>> = String.last str
+    pad_len = last * (-1)
+    {depadded, _} = String.split_at(str, pad_len)
+    depadded
   end
 
   # Pops the signature param, which must be the last one.
