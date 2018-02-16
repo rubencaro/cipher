@@ -16,6 +16,15 @@ defmodule Cipher do
   @k H.env(:keyphrase) |> Cipher.Digest.generate_key
   @i H.env(:ivphrase) |> Cipher.Digest.generate_iv
 
+  defp get_phrase(type) do
+    case {H.env(:runtime_phrases, false), type} do
+      {true, :keyphrase} -> H.env(:keyphrase) |> Cipher.Digest.generate_key
+      {false, :keyphrase} -> @k
+      {true, :ivphrase} -> H.env(:ivphrase) |> Cipher.Digest.generate_iv
+      {false, :ivphrase} -> @i
+    end
+  end
+
   @doc """
     Returns encrypted string containing given `data` string
 
@@ -26,7 +35,9 @@ defmodule Cipher do
     ```
   """
   def encrypt(data) when is_binary(data) do
-    encrypted = :crypto.block_encrypt :aes_cbc128, @k, @i, pad(data)
+    k = get_phrase(:keyphrase)
+    i = get_phrase(:ivphrase)
+    encrypted = :crypto.block_encrypt :aes_cbc128, k, i, pad(data)
     encrypted |> Base.encode64 |> URI.encode_www_form
   end
 
@@ -60,8 +71,10 @@ defmodule Cipher do
   end
 
   defp do_decrypt(decoded) do
+    k = get_phrase(:keyphrase)
+    i = get_phrase(:ivphrase)
     try do
-      :crypto.block_decrypt(:aes_cbc128, @k, @i, decoded) |> depad
+      :crypto.block_decrypt(:aes_cbc128, k, i, decoded) |> depad
     rescue
       _ -> {:error, "Could not decrypt string '#{decoded}'. Maybe it was encrypted with a different key."}
     end
