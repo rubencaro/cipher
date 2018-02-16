@@ -137,4 +137,21 @@ defmodule CipherTest do
     assert {:ok, _} = C.validate_signed_url(s)
   end
 
+  test "will use runtime keys" do
+    original_keyphrase = H.env(:keyphrase)
+    original_ivphrase = H.env(:ivphrase)
+
+    # if we change runtime_phrases to true it will grab configs at runtime
+    # instead of compile time
+    Application.put_env(:cipher, :runtime_phrases, true)
+    Application.put_env(:cipher, :keyphrase, "testiekeyphraseforcipher_runtime")
+    Application.put_env(:cipher, :ivphrase, "testieivphraseforcipher_runtime")
+    assert "secret" |> C.encrypt  == "txp3eryk5R8zxQfUtz4htA%3D%3D"
+    assert "txp3eryk5R8zxQfUtz4htA%3D%3D" |> C.decrypt  == "secret"
+
+    # put things back to original values
+    Application.put_env(:cipher, :runtime_phrases, false)
+    Application.put_env(:cipher, :keyphrase, original_keyphrase)
+    Application.put_env(:cipher, :ivphrase, original_ivphrase)
+  end
 end
