@@ -4,9 +4,11 @@
 [![Hex Version](http://img.shields.io/hexpm/v/cipher.svg?style=flat)](https://hex.pm/packages/cipher)
 [![Hex Version](http://img.shields.io/hexpm/dt/cipher.svg?style=flat)](https://hex.pm/packages/cipher)
 
-Elixir crypto library to encrypt/decrypt arbitrary binaries. It uses [Erlang Crypto](http://www.erlang.org/doc/man/crypto.html), so it's not big deal. Mostly a collection of helpers wrapping it.
+Elixir crypto library to encrypt/decrypt arbitrary binaries. It uses [Erlang Crypto](http://www.erlang.org/doc/man/crypto.html), so it's not a big deal. Mostly a collection of helpers wrapping it.
 
 This library allows us to use a crypted key to validate signed requests, with a cipher compatible with [this one](https://gist.github.com/rubencaro/9545060#file-gistfile3-ex). This way it can be used from Python, Ruby or Elixir apps.
+
+`Cipher` is only meant for that. **Not for security**. For applications that need any level of security I would recommend using a good implementation of JWT.
 
 ## Use
 
