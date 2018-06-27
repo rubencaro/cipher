@@ -14,12 +14,8 @@ defmodule Cipher do
      "\n", :reset] |> IO.ANSI.format(true) |> IO.puts
   end
 
-  defp get_phrase(type) do
-    case type do
-      :keyphrase -> H.env(:keyphrase) |> Cipher.Digest.generate_key
-      :ivphrase -> H.env(:ivphrase) |> Cipher.Digest.generate_iv
-    end
-  end
+  defp get_phrase(:keyphrase), do: H.env(:keyphrase) |> Cipher.Digest.generate_key()
+  defp get_phrase(:ivphrase), do: H.env(:ivphrase) |> Cipher.Digest.generate_iv()
 
   @doc """
     Returns encrypted string containing given `data` string
