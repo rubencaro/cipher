@@ -13,17 +13,9 @@ defmodule Cipher do
      "You need to configure both `keyphrase` and `ivphrase` to compile `Cipher`",
      "\n", :reset] |> IO.ANSI.format(true) |> IO.puts
   end
-  @k H.env(:keyphrase) |> Cipher.Digest.generate_key
-  @i H.env(:ivphrase) |> Cipher.Digest.generate_iv
 
-  defp get_phrase(type) do
-    case {H.env(:runtime_phrases, false), type} do
-      {true, :keyphrase} -> H.env(:keyphrase) |> Cipher.Digest.generate_key
-      {false, :keyphrase} -> @k
-      {true, :ivphrase} -> H.env(:ivphrase) |> Cipher.Digest.generate_iv
-      {false, :ivphrase} -> @i
-    end
-  end
+  defp get_phrase(:keyphrase), do: H.env(:keyphrase) |> Cipher.Digest.generate_key()
+  defp get_phrase(:ivphrase), do: H.env(:ivphrase) |> Cipher.Digest.generate_iv()
 
   @doc """
     Returns encrypted string containing given `data` string

@@ -39,15 +39,6 @@ When you decrypt non-valid strings you can get two kinds of errors:
 * `{:error, "Could not decode string 'yourstring'..."}` if your string was tampered or wrongly transferred.
 * `{:error, "Could not decrypt string 'yourstring'..."}` if your string was encrypted using different keys. Maybe some edge cases of tampering too.
 
-## Runtime Key Config
-* You may want to set your key configs from enviroment variables and not have those available at compile time.
-* Setting the runtime_phrases config to true will have Cipher grab the values from the config evertime instead of using the compiled values.
-```elixir
-config :cipher, runtime_phrases: true,
-                keyphrase: System.get_env("keyphrase"),
-                ivphrase: System.get_env("ivphrase")
-```
-
 ## Cipher/Parse JSON
 
 `cipher/1` and `parse/1`. Just as `encrypt/1` and `decrypt/1` but for JSON.
