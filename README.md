@@ -1,3 +1,10 @@
+# Deprecated
+
+Cipher is currently being phased out and is no longer under activate maintenence.
+We suggest you use an alternative for URL signing and validation such as [JWT](https://jwt.io/) or something else.
+
+For more information on why this decision was taken, feel free to refer to [this issue](https://github.com/rubencaro/cipher/issues/22).
+
 # Cipher
 
 [![Build Status](https://api.travis-ci.org/rubencaro/cipher.svg)](https://travis-ci.org/rubencaro/cipher)
@@ -158,6 +165,11 @@ Use it as any other plug:
 plug Cipher.ValidatePlug
 ```
 
+### Options for `ValidatePlug`
+
+1. `error_callback`
+2. `test_mode`
+
 You can pass an `error_callback` that will be called right before sending the 401 response. This callback is meant to let the user do things like logging when validation fails. You should not call `send_resp` or `halt` over the `conn`, as that will already be done by the plug.
 ```elixir
 # ...
@@ -172,6 +184,21 @@ end
 
 # ...
 ```
+
+You can also pass `test_mode` as an option (which is `false` by default).
+If set to `true`, it will **not** halt the Plug pipeline and will simply continue.
+
+This can be useful in conjunction with `error_callback` where you just log requests whose validation has failed, but continue anyway.
+
+```elixir
+  plug(
+    Cipher.ValidatePlug,
+    test_mode: true,
+    error_callback: &MyApp.my_validation_error_logging_callback/2
+  )
+```
+
+### Notes
 
 Note that for body signature validations (those required by POST, PUT, etc.) this plug requires that the signature is made using `Cipher.sign_url_from_mapped_body`. This is due to the way `Plug` parses the request body. The body can be read only once, and it is already read by the `Plug.Parsers` plug. By the time it gets to the `ValidatePlug` it has already been parsed to a `Map`, so the signature must have been done over the mapped structure of data instead of the plain text encoded body.
 
