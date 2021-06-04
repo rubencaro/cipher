@@ -5,7 +5,7 @@ defmodule CipherTest do
   alias Cipher, as: C
 
   test "the whole encrypt/decrypt stack" do
-    s = Poison.encode! %{"hola": " qué tal ｸｿ"}
+    s = Poison.encode! %{hola: " qué tal ｸｿ"}
     assert s == s |> C.encrypt |> C.decrypt
 
     assert {:error, _} = "random" |> C.decrypt    # decode fails
@@ -35,7 +35,7 @@ defmodule CipherTest do
   end
 
   test "get ciphered hash" do
-    h = %{"hola": " qué tal ｸｿ"}
+    h = %{hola: " qué tal ｸｿ"}
     s = h |> Poison.encode! |> C.encrypt
     assert C.cipher(h) == s
   end
@@ -68,14 +68,14 @@ defmodule CipherTest do
 
   test "Magic Token works with body" do
     url = "/bla/bla"
-    body = Poison.encode! %{"hola": " qué tal ｸｿ"}
+    body = Poison.encode! %{hola: " qué tal ｸｿ"}
     assert {:ok, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}" |> C.validate_signed_body(body)
     assert {:error, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}X" |> C.validate_signed_body(body)
   end
 
   test "validate_signed_body" do
     url = "/bla/bla"
-    body = Poison.encode! %{"hola": " qué tal ｸｿ"}
+    body = Poison.encode! %{hola: " qué tal ｸｿ"}
     assert {:error, _} = "#{url}" |> C.validate_signed_body(body)
     assert {:error, _} = "#{url}?signature=badhash" |> C.validate_signed_body(body)
     assert {:error, _} = "#{url}?asdkjh=sdfklh&signature=badhash" |> C.validate_signed_body(body)
@@ -84,7 +84,7 @@ defmodule CipherTest do
 
   test "signing body also denies params" do
     url = "/bla/bla"
-    body = Poison.encode! %{"hola": " qué tal ｸｿ"}
+    body = Poison.encode! %{hola: " qué tal ｸｿ"}
     signed = C.sign_url_from_body(url, body, deny: ["cb"])
     assert {:ok, _} = "#{signed}" |> C.validate_signed_body(body)
     assert {:ok, _} = "#{signed}&other=123456" |> C.validate_signed_body(body)
@@ -94,7 +94,7 @@ defmodule CipherTest do
 
   test "Magic Token works with signed mapped body" do
     url = "/bla/bla"
-    body = %{"hola": " qué tal ｸｿ"} |> Poison.encode! |> Poison.decode!
+    body = %{hola: " qué tal ｸｿ"} |> Poison.encode! |> Poison.decode!
     assert {:ok, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}" |> C.validate_signed_body(body)
     assert {:error, _} = "#{url}?a=123&signature=#{H.env(:magic_token)}X" |> C.validate_signed_body(body)
   end
@@ -102,21 +102,21 @@ defmodule CipherTest do
   test "validate_signed_mapped_body" do
     url = "/bla/bla"
     # body is signed, then JSON encoded, then sent, then JSON decoded, then validated
-    raw_body = %{"hola": " qué tal ｸｿ", "ymás": "ymás"}
+    raw_body = %{hola: " qué tal ｸｿ", ymás: "ymás"}
     body = raw_body |> Poison.encode! |> Poison.decode!
     assert {:error, _} = "#{url}" |> C.validate_signed_body(body)
     assert {:error, _} = "#{url}?signature=badhash" |> C.validate_signed_body(body)
     assert {:error, _} = "#{url}?asdkjh=sdfklh&signature=badhash" |> C.validate_signed_body(body)
     assert {:ok, _} = "#{url}" |> C.sign_url_from_mapped_body(raw_body) |> C.validate_signed_body(body)
     # reordered works the same
-    raw_body = %{"ymás": "ymás", "hola": " qué tal ｸｿ"}
+    raw_body = %{ymás: "ymás", hola: " qué tal ｸｿ"}
     assert {:ok, _} = "#{url}" |> C.sign_url_from_mapped_body(raw_body) |> C.validate_signed_body(body)
   end
 
   test "signing mapped body also denies params" do
     url = "/bla/bla"
     # body is signed, then JSON encoded, then sent, then JSON decoded, then validated
-    raw_body = %{"hola": " qué tal ｸｿ"}
+    raw_body = %{hola: " qué tal ｸｿ"}
     body = raw_body |> Poison.encode! |> Poison.decode!
     signed = C.sign_url_from_mapped_body(url, raw_body, deny: ["cb"])
     assert {:ok, _} = "#{signed}" |> C.validate_signed_body(body)
