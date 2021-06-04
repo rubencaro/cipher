@@ -16,7 +16,7 @@ defmodule ValidatePlugTest do
   end
 
   test "validates POST/PUT requests" do
-    raw_body = %{"hola": " qué tal ｸｿ", "ymás": "ymás"}
+    raw_body = %{hola: " qué tal ｸｿ", ymás: "ymás"}
     encoded_body = raw_body |> Poison.encode!
 
     url = "/bogus"
