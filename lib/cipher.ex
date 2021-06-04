@@ -29,8 +29,8 @@ defmodule Cipher do
   def encrypt(data) when is_binary(data) do
     k = get_phrase(:keyphrase)
     i = get_phrase(:ivphrase)
-    encrypted = :crypto.block_encrypt :aes_cbc128, k, i, pad(data)
-    encrypted |> Base.encode64 |> URI.encode_www_form
+    encrypted = crypto_block_encrypt(:aes_cbc128, k, i, pad(data))
+    encrypted |> Base.encode64() |> URI.encode_www_form()
   end
 
   @doc """
@@ -66,7 +66,7 @@ defmodule Cipher do
     k = get_phrase(:keyphrase)
     i = get_phrase(:ivphrase)
     try do
-      :crypto.block_decrypt(:aes_cbc128, k, i, decoded) |> depad
+      crypto_block_decrypt(:aes_cbc128, k, i, decoded) |> depad()
     rescue
       _ -> {:error, "Could not decrypt string '#{decoded}'. Maybe it was encrypted with a different key."}
     end
@@ -312,4 +312,31 @@ defmodule Cipher do
       |> String.replace("%0a", "")
   end
 
+  # otp 23 deprecated and otp 24 removed retired cipher names
+  # http://erlang.org/doc/apps/crypto/new_api.html#retired-cipher-names
+  defp map_algorithm(:aes_cbc128, _key), do: :aes_128_cbc
+  defp map_algorithm(:aes_cbc256, _key), do: :aes_256_cbc
+  defp map_algorithm(:aes_gcm, key) do
+    case bit_size(key) do
+      128 -> :aes_128_gcm
+      192 -> :aes_192_gcm
+      256 -> :aes_256_gcm
+    end
+  end
+
+  defp crypto_block_encrypt(algorithm, key, initialization_vector, {aad, plain_text}) do
+    :crypto.crypto_one_time_aead(map_algorithm(algorithm, key), key, initialization_vector, plain_text, aad, true)
+  end
+
+  defp crypto_block_encrypt(algorithm, key, initialization_vector, plain_text) do
+    :crypto.crypto_one_time(map_algorithm(algorithm, key), key, initialization_vector, plain_text, true)
+  end
+
+  defp crypto_block_decrypt(algorithm, key, initialization_vector, {aad, data, tag}) do
+    :crypto.crypto_one_time_aead(map_algorithm(algorithm, key), key, initialization_vector, data, aad, tag, false)
+  end
+
+  defp crypto_block_decrypt(algorithm, key, initialization_vector, data) do
+    :crypto.crypto_one_time(map_algorithm(algorithm, key), key, initialization_vector, data, false)
+  end
 end
